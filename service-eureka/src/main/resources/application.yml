@@ -1,0 +1,19 @@
+#服务与注册的名称
+spring:
+  application:
+    name: eureka-server
+#端口号
+server:
+  port: 8761
+#eureka的地址
+eureka:
+  instance:
+    hostname: localhost
+  #客户端地址
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  #是否要向其他eureka service拉取注册表信息
+    fetch-registry: false
+  #是否要注册到其他的eureka上，
+    register-with-eureka: false
