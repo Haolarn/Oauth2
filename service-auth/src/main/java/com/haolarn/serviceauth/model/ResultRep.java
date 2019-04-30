@@ -1,5 +1,6 @@
 package com.haolarn.serviceauth.model;
 
+//统一的返回结果
 public class ResultRep<T> {
     private Integer code;
     private String msg;

@@ -63,12 +63,22 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         //拦截csrf跨站点请求伪造攻击
-        http.csrf().disable()
+        /*http.csrf().disable();*/
         //设置哪些请求被拦截需要进行验证，
-        .requestMatchers().anyRequest()
+       /* .requestMatchers().anyRequest()
                 .and()
                 //设置哪些请求需要被放行，oauth2提供了oauth/api接口进行token的获取
                 .authorizeRequests()
-                .antMatchers("/oauth/**").permitAll();
+                .antMatchers("/oauth/**").permitAll();*/
+        http
+                .authorizeRequests()
+                .antMatchers("/user/*")
+                .authenticated()
+                .antMatchers("/oauth/token").permitAll()
+                .anyRequest()
+                .permitAll()
+                .and()
+                //关闭跨站请求防护
+                .csrf().disable();
     }
 }

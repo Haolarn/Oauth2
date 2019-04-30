@@ -12,6 +12,12 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 //作为配置bean注入spring容器
 @Configuration
@@ -24,8 +30,12 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Autowired
     RedisConnectionFactory redisConnectionFactory;
 
+    @Autowired
+    JwtAccessTokenConverter jwtAccessTokenConverter;
 
-    //用来配置令牌端点(Token Endpoint)的安全约束
+    //注入扩展的Token
+    @Autowired
+    private TokenEnhancer jwtTokenEnhancer;
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         //允许进行表单认证，可以作为表单型参数。
@@ -57,11 +67,20 @@ public class AuthorizationServerConfiguration extends AuthorizationServerConfigu
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         //设置token的存储用redis进行保存
+        TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+        List<TokenEnhancer> enhancerList = new ArrayList<>();
+        enhancerList.add(jwtTokenEnhancer);
+        enhancerList.add(jwtAccessTokenConverter);
+        enhancerChain.setTokenEnhancers(enhancerList);
         endpoints.tokenStore(new MyRedisTokenStore(redisConnectionFactory))
                 //保存该token能允许访问的权限
                 .authenticationManager(authenticationManager)
                 //保存该token能够允许被请求的方法，get用来获取，post用来验证
-                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST);
+                .allowedTokenEndpointRequestMethods(HttpMethod.GET, HttpMethod.POST)
+                //调用执行链
+                .tokenEnhancer(enhancerChain)
+                //使用token作为生成的规则
+                .accessTokenConverter(jwtAccessTokenConverter);
 
     }
 }

@@ -17,13 +17,13 @@ public class ServiceAuthApplication {
         SpringApplication.run(ServiceAuthApplication.class, args);
     }
 
-    @Bean
+ /*   @Bean
     public FilterRegistrationBean responseFilterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean(new ResponseFilter());
         registration.addUrlPatterns("/*");
         registration.setName("responseFilter");
         registration.setOrder(-999999999);
         return registration;
-    }
+    }*/
 
 }

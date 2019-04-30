@@ -1,5 +1,6 @@
 package com.haolarn.serviceauth.model;
 
+//封装请求失败的结果
 public class ErrorResult {
 
     private String error;

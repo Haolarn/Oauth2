@@ -1,5 +1,6 @@
 package com.haolarn.serviceauth.model;
 
+//封装调用成功的结果
 public class SuccessResult {
     //正常时候返回值
     //{"access_token":"75ee6e81-5085-4d94-8d37-4d0daf785532",
